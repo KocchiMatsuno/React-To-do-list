@@ -1,0 +1,171 @@
+/* ---------- Theme Variables (Optional for other use) ---------- */
+body.light {
+  --bg-color: #f4f4f4;
+  --text-color: #111;
+  --input-bg: #ffffff;
+  --input-border: #ccc;
+  --button-bg: #ffffff;
+  --button-text: #000;
+}
+
+body.dark {
+  --bg-color: #111;
+  --text-color: #f4f4f4;
+  --input-bg: #2c2c2c;
+  --input-border: #444;
+  --button-bg: #2c2c2c;
+  --button-text: #fff;
+}
+
+/* ---------- Base Styles ---------- */
+body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.page-wrapper {
+  min-height: 100vh;
+}
+
+/* ---------- Animations ---------- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out forwards;
+}
+
+.fade-out {
+  animation: fadeOut 0.3s ease-in-out forwards;
+}
+
+/* ---------- Header ---------- */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background-color: inherit;
+}
+
+.toggle-theme-btn {
+  font-size: 1.5rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.toggle-theme-btn:hover {
+  transform: rotate(20deg);
+}
+
+/* ---------- Main Content ---------- */
+.main-content {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* ---------- Task Input + Add Button ---------- */
+.task-input-wrapper {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.task-input {
+  flex: 1;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid var(--input-border);
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  transition: all 0.3s ease;
+}
+
+.add-button {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border: 1px solid var(--input-border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* ---------- Task List ---------- */
+.task-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 1.5rem;
+}
+
+/* Task Item Card (Light & Dark mode handled separately) */
+.task-list li {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Light mode task card */
+body.light .task-list li {
+  background-color: #ffffff;
+  color: #111;
+}
+
+/* Dark mode task card */
+body.dark .task-list li {
+  background-color: #3a3a3a;
+  color: #f4f4f4;
+  box-shadow: 0 4px 8px rgba(255, 255, 255, 0.05);
+}
+
+/* ---------- Task Buttons ---------- */
+.task-list button {
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  transition: color 0.3s ease;
+}
+
+/* You can set transparent icons and customize hover colors if needed */
+.task-list button.edit {
+  color: white;
+}
+
+.task-list button.delete {
+  color: red;
+}
