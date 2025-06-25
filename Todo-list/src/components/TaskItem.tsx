@@ -8,6 +8,7 @@ interface Props {
   onRemove: (id: string) => void;
   onEdit: (id: string, newTitle: string) => void;
   onToggleComplete: (id: string, completed: boolean) => void;
+  onMovedOut?: (id: string) => void; // ✅ Support animation before moving between lists
 }
 
 export default function TaskItem({
@@ -18,10 +19,12 @@ export default function TaskItem({
   onRemove,
   onEdit,
   onToggleComplete,
+  onMovedOut,
 }: Props) {
   const [editing, setEditing] = useState(false);
   const [newTitle, setNewTitle] = useState(title);
   const [isVisible, setIsVisible] = useState(true);
+  const [prevCompleted, setPrevCompleted] = useState(completed);
 
   const handleEdit = () => {
     if (editing && newTitle.trim()) {
@@ -35,11 +38,24 @@ export default function TaskItem({
     setTimeout(() => onRemove(id), 300);
   };
 
+  // Normal removal (e.g. delete button or delete completed)
   useEffect(() => {
     if (isRemoving) {
       setIsVisible(false);
     }
   }, [isRemoving]);
+
+  // ✅ Animate task movement between active/completed lists
+  useEffect(() => {
+    if (completed !== prevCompleted) {
+      setIsVisible(false);
+      const timeout = setTimeout(() => {
+        if (onMovedOut) onMovedOut(id);
+      }, 300);
+      return () => clearTimeout(timeout);
+    }
+    setPrevCompleted(completed);
+  }, [completed]);
 
   return (
     <li className={`task-item ${isVisible ? "fade-in" : "fade-out"}`}>

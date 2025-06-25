@@ -14,9 +14,12 @@ import TaskItem from "../components/TaskItem";
 
 export default function HomePage() {
   const [darkMode, setDarkMode] = useState(false);
+  const [showCompleted, setShowCompleted] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const { tasks, loading } = useSelector((state: RootState) => state.tasks);
+
   const [removingIds, setRemovingIds] = useState<string[]>([]);
+  const [movingIds, setMovingIds] = useState<string[]>([]); // ✅ NEW
 
   useEffect(() => {
     dispatch(fetchTasks());
@@ -36,6 +39,22 @@ export default function HomePage() {
     }, 300);
   };
 
+  const handleToggleComplete = (id: string, completed: boolean) => {
+    setMovingIds((prev) => [...prev, id]); // mark as moving
+    setTimeout(() => {
+      dispatch(toggleComplete({ id, completed }));
+    }, 300); // wait for animation
+  };
+
+  const handleMovedOut = (id: string) => {
+    setMovingIds((prev) => prev.filter((x) => x !== id));
+  };
+
+  // ✅ hide transitioning tasks while moving
+  const visibleTasks = tasks.filter(
+    (t) => t.completed === showCompleted && !movingIds.includes(t.id)
+  );
+
   return (
     <div className={`page-wrapper ${darkMode ? "dark" : "light"}`}>
       <header className="header">
@@ -51,32 +70,52 @@ export default function HomePage() {
 
       <main className="main-content">
         <div className="task-input-wrapper">
-          <TaskInput onAdd={(t) => dispatch(addNew(t))} />
+          {!showCompleted && <TaskInput onAdd={(t) => dispatch(addNew(t))} />}
           <button
-            onClick={handleDeleteCompleted}
-            className="delete-completed-button"
-            title="Delete All Completed Tasks"
+            onClick={() => setShowCompleted((prev) => !prev)}
+            className="add-button"
+            title="Toggle Completed View"
           >
-            Delete Completed Tasks
+            {showCompleted
+              ? "← Back to Active Tasks"
+              : "✅ View Completed Tasks"}
           </button>
         </div>
 
+        {showCompleted && (
+          <div
+            style={{
+              marginBottom: "1rem",
+              display: "flex",
+              justifyContent: "flex-end",
+            }}
+          >
+            <button
+              onClick={handleDeleteCompleted}
+              className="delete-completed-button"
+              title="Delete All Completed Tasks"
+            >
+              🗑️
+            </button>
+          </div>
+        )}
+
         {loading && <p>Loading...</p>}
+
         <ul className="task-list">
-          {tasks.map((x) => (
+          {visibleTasks.map((x) => (
             <TaskItem
               key={x.id}
               id={x.id}
               title={x.title}
               completed={x.completed}
               isRemoving={removingIds.includes(x.id)}
-              onToggleComplete={(id, completed) =>
-                dispatch(toggleComplete({ id, completed }))
-              }
+              onToggleComplete={handleToggleComplete}
               onRemove={(id) => dispatch(removeOne(id))}
               onEdit={(id, newTitle) =>
                 dispatch(updateTask({ id, title: newTitle }))
               }
+              onMovedOut={handleMovedOut} // ✅ handle fade-out complete
             />
           ))}
         </ul>
