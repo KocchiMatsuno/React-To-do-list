@@ -92,6 +92,8 @@ const initialState: TaskState = {
   loading: false,
 };
 
+// ... (imports unchanged)
+
 const taskSlice = createSlice({
   name: 'tasks',
   initialState,
@@ -118,6 +120,7 @@ const taskSlice = createSlice({
           task.completed = action.payload.completed;
         }
       })
+      // ✅ This is the FIX
       .addCase(toggleComplete.fulfilled, (state, action: PayloadAction<Task>) => {
         const task = state.tasks.find((t) => t.id === action.payload.id);
         if (task) {
@@ -129,5 +132,6 @@ const taskSlice = createSlice({
       });
   },
 });
+
 
 export default taskSlice.reducer;

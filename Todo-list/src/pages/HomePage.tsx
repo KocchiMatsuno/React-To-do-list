@@ -19,7 +19,7 @@ export default function HomePage() {
   const { tasks, loading } = useSelector((state: RootState) => state.tasks);
 
   const [removingIds, setRemovingIds] = useState<string[]>([]);
-  const [movingIds, setMovingIds] = useState<string[]>([]); // ✅ NEW
+  const [movingOutIds, setMovingOutIds] = useState<string[]>([]);
 
   useEffect(() => {
     dispatch(fetchTasks());
@@ -33,26 +33,26 @@ export default function HomePage() {
   const handleDeleteCompleted = () => {
     const completedIds = tasks.filter((t) => t.completed).map((t) => t.id);
     setRemovingIds(completedIds);
+
     setTimeout(() => {
       dispatch(deleteCompleted());
       setRemovingIds([]);
-    }, 300);
+    }, 300); // match fade-out duration
   };
 
   const handleToggleComplete = (id: string, completed: boolean) => {
-    setMovingIds((prev) => [...prev, id]); // mark as moving
+    setMovingOutIds((prev) => [...prev, id]);
+
     setTimeout(() => {
-      dispatch(toggleComplete({ id, completed }));
-    }, 300); // wait for animation
+      dispatch(toggleComplete({ id, completed })).then(() => {
+        // ✅ Remove from animation queue after toggle
+        setMovingOutIds((prev) => prev.filter((x) => x !== id));
+      });
+    }, 300);
   };
 
-  const handleMovedOut = (id: string) => {
-    setMovingIds((prev) => prev.filter((x) => x !== id));
-  };
-
-  // ✅ hide transitioning tasks while moving
   const visibleTasks = tasks.filter(
-    (t) => t.completed === showCompleted && !movingIds.includes(t.id)
+    (t) => t.completed === showCompleted && !movingOutIds.includes(t.id)
   );
 
   return (
@@ -60,7 +60,7 @@ export default function HomePage() {
       <header className="header">
         <h1>Todo List</h1>
         <button
-          onClick={() => setDarkMode(!darkMode)}
+          onClick={() => setDarkMode((prev) => !prev)}
           className="toggle-theme-btn"
           title="Toggle Theme"
         >
@@ -115,7 +115,7 @@ export default function HomePage() {
               onEdit={(id, newTitle) =>
                 dispatch(updateTask({ id, title: newTitle }))
               }
-              onMovedOut={handleMovedOut} // ✅ handle fade-out complete
+              // ✅ Removed: onMovedOut={handleMovedOut}
             />
           ))}
         </ul>

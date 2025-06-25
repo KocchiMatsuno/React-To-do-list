@@ -8,7 +8,6 @@ interface Props {
   onRemove: (id: string) => void;
   onEdit: (id: string, newTitle: string) => void;
   onToggleComplete: (id: string, completed: boolean) => void;
-  onMovedOut?: (id: string) => void; // ✅ Support animation before moving between lists
 }
 
 export default function TaskItem({
@@ -19,12 +18,11 @@ export default function TaskItem({
   onRemove,
   onEdit,
   onToggleComplete,
-  onMovedOut,
 }: Props) {
   const [editing, setEditing] = useState(false);
   const [newTitle, setNewTitle] = useState(title);
-  const [isVisible, setIsVisible] = useState(true);
   const [prevCompleted, setPrevCompleted] = useState(completed);
+  const [isAnimatingOut, setIsAnimatingOut] = useState(false);
 
   const handleEdit = () => {
     if (editing && newTitle.trim()) {
@@ -34,31 +32,31 @@ export default function TaskItem({
   };
 
   const handleRemove = () => {
-    setIsVisible(false);
+    setIsAnimatingOut(true);
     setTimeout(() => onRemove(id), 300);
   };
 
-  // Normal removal (e.g. delete button or delete completed)
+  // Animate removal
   useEffect(() => {
     if (isRemoving) {
-      setIsVisible(false);
+      setIsAnimatingOut(true);
     }
   }, [isRemoving]);
 
-  // ✅ Animate task movement between active/completed lists
+  // Animate move between lists (just fade out, parent handles re-appearance)
   useEffect(() => {
     if (completed !== prevCompleted) {
-      setIsVisible(false);
+      setIsAnimatingOut(true);
       const timeout = setTimeout(() => {
-        if (onMovedOut) onMovedOut(id);
+        setPrevCompleted(completed);
+        setIsAnimatingOut(false);
       }, 300);
       return () => clearTimeout(timeout);
     }
-    setPrevCompleted(completed);
   }, [completed]);
 
   return (
-    <li className={`task-item ${isVisible ? "fade-in" : "fade-out"}`}>
+    <li className={`task-item ${isAnimatingOut ? "fade-out" : "fade-in"}`}>
       <input
         type="checkbox"
         checked={completed}
