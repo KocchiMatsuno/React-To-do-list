@@ -1,13 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface Props {
   id: string;
   title: string;
+  completed: boolean;
+  isRemoving?: boolean;
   onRemove: (id: string) => void;
   onEdit: (id: string, newTitle: string) => void;
+  onToggleComplete: (id: string, completed: boolean) => void;
 }
 
-export default function TaskItem({ id, title, onRemove, onEdit }: Props) {
+export default function TaskItem({
+  id,
+  title,
+  completed,
+  isRemoving,
+  onRemove,
+  onEdit,
+  onToggleComplete,
+}: Props) {
   const [editing, setEditing] = useState(false);
   const [newTitle, setNewTitle] = useState(title);
   const [isVisible, setIsVisible] = useState(true);
@@ -24,8 +35,21 @@ export default function TaskItem({ id, title, onRemove, onEdit }: Props) {
     setTimeout(() => onRemove(id), 300);
   };
 
+  useEffect(() => {
+    if (isRemoving) {
+      setIsVisible(false);
+    }
+  }, [isRemoving]);
+
   return (
     <li className={`task-item ${isVisible ? "fade-in" : "fade-out"}`}>
+      <input
+        type="checkbox"
+        checked={completed}
+        onChange={(e) => onToggleComplete(id, e.target.checked)}
+        style={{ marginRight: "0.75rem" }}
+      />
+
       {editing ? (
         <input
           type="text"
@@ -36,7 +60,15 @@ export default function TaskItem({ id, title, onRemove, onEdit }: Props) {
           className="task-edit-input"
         />
       ) : (
-        <span className="task-title">{title}</span>
+        <span
+          className="task-title"
+          style={{
+            textDecoration: completed ? "line-through" : "none",
+            flex: 1,
+          }}
+        >
+          {title}
+        </span>
       )}
 
       <div className="task-actions">

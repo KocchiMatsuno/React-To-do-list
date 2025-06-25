@@ -6,4 +6,3 @@ export interface TaskRepository {
   get(id: string): Promise<Task | undefined>;
   getAll(): Promise<Task[]>;
 }
-  

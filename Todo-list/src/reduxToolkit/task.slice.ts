@@ -6,23 +6,20 @@ import { AddTaskUseCase } from '../domain/usecases/AddTaskUseCase';
 import { RemoveTaskUseCase } from '../domain/usecases/RemoveTaskUseCase';
 import { GetAllTasksUseCase } from '../domain/usecases/GetAllTasksUseCase';
 import { UpdateTaskUseCase } from '../domain/usecases/UpdateTaskUseCase';
-
 import { v4 as uuidv4 } from 'uuid';
 
-// Repositories and Use Cases
 const repo = new LocalStorageTaskRepository();
 const getAllTasks = new GetAllTasksUseCase(repo);
 const addTaskUC = new AddTaskUseCase(repo);
 const removeTaskUC = new RemoveTaskUseCase(repo);
 const updateTaskUC = new UpdateTaskUseCase(repo);
 
-// Thunks
 export const fetchTasks = createAsyncThunk('tasks/fetch', async () => {
   return await getAllTasks.execute();
 });
 
 export const addNew = createAsyncThunk('tasks/add', async (title: string) => {
-  const task = { id: uuidv4(), title };
+  const task = { id: uuidv4(), title, completed: false };
   await addTaskUC.execute(task);
   return task;
 });
@@ -32,26 +29,69 @@ export const removeOne = createAsyncThunk('tasks/remove', async (id: string) => 
   return id;
 });
 
+// ✅ FIXED: updateTask sends a complete Task object
 export const updateTask = createAsyncThunk(
   'tasks/update',
-  async (payload: { id: string; title: string }) => {
-    await updateTaskUC.execute(payload); // ✅ CORRECTED
-    return payload;
+  async (payload: { id: string; title: string }, { getState }) => {
+    const state = getState() as { tasks: TaskState };
+    const existing = state.tasks.tasks.find(t => t.id === payload.id);
+
+    if (!existing) throw new Error("Task not found");
+
+    const updatedTask: Task = {
+      id: payload.id,
+      title: payload.title,
+      completed: existing.completed
+    };
+
+    await updateTaskUC.execute(updatedTask);
+    return updatedTask;
   }
 );
 
-// State
+// Toggle completed
+export const toggleComplete = createAsyncThunk(
+  'tasks/toggleComplete',
+  async (payload: { id: string; completed: boolean }, { getState }) => {
+    const state = getState() as { tasks: TaskState };
+    const task = state.tasks.tasks.find((t) => t.id === payload.id);
+
+    if (!task) throw new Error("Task not found");
+
+    const updatedTask: Task = {
+      id: task.id,
+      title: task.title,
+      completed: payload.completed
+    };
+
+    await updateTaskUC.execute(updatedTask);
+    return updatedTask;
+  }
+);
+
+// Delete all completed
+export const deleteCompleted = createAsyncThunk(
+  'tasks/deleteCompleted',
+  async (_, { getState }) => {
+    const state = getState() as { tasks: TaskState };
+    const toDelete = state.tasks.tasks.filter((t) => t.completed);
+    await Promise.all(toDelete.map((t) => removeTaskUC.execute(t.id)));
+    return toDelete.map((t) => t.id);
+  }
+);
+
+// State type
 interface TaskState {
   tasks: Task[];
   loading: boolean;
 }
 
+// Initial state
 const initialState: TaskState = {
   tasks: [],
   loading: false,
 };
 
-// Slice
 const taskSlice = createSlice({
   name: 'tasks',
   initialState,
@@ -71,11 +111,21 @@ const taskSlice = createSlice({
       .addCase(removeOne.fulfilled, (state, action: PayloadAction<string>) => {
         state.tasks = state.tasks.filter((t) => t.id !== action.payload);
       })
-      .addCase(updateTask.fulfilled, (state, action: PayloadAction<{ id: string; title: string }>) => {
+      .addCase(updateTask.fulfilled, (state, action: PayloadAction<Task>) => {
         const task = state.tasks.find((t) => t.id === action.payload.id);
         if (task) {
           task.title = action.payload.title;
+          task.completed = action.payload.completed;
         }
+      })
+      .addCase(toggleComplete.fulfilled, (state, action: PayloadAction<Task>) => {
+        const task = state.tasks.find((t) => t.id === action.payload.id);
+        if (task) {
+          task.completed = action.payload.completed;
+        }
+      })
+      .addCase(deleteCompleted.fulfilled, (state, action: PayloadAction<string[]>) => {
+        state.tasks = state.tasks.filter((t) => !action.payload.includes(t.id));
       });
   },
 });
