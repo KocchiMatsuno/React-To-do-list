@@ -3,14 +3,14 @@ import { useState } from "react";
 export default function TaskInput({
   onAdd,
 }: {
-  onAdd: (title: string) => void;
+  onAdd: (title: string) => boolean; // Return success/failure
 }) {
   const [title, setTitle] = useState("");
 
   const handleAdd = () => {
     if (title.trim()) {
-      onAdd(title.trim());
-      setTitle("");
+      const success = onAdd(title.trim());
+      if (success) setTitle("");
     }
   };
 

@@ -247,6 +247,146 @@ body.dark .delete-completed-button {
   color: #111;
 }
 
+/* ---------- Toast Notifications ---------- */
+.toast {
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  animation: fadeInOut 3.5s ease forwards;
+  font-size: 0.95rem;
+  color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  max-width: 320px;
+  word-wrap: break-word;
+}
+
+/* Success = Green (for add or complete) */
+.toast.success {
+  background-color: #4caf50;
+}
+
+/* Error = Red (for delete or duplicate) */
+.toast.error,
+.toast.duplicate {
+  background-color: #f44336;
+}
+
+/* Fade animation for toasts */
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  90% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+/* ---------- Toast Container (Stacked Notifications) ---------- */
+.toast-container {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; /* space between toasts */
+  z-index: 9999;
+}
+
+.toast {
+  pointer-events: auto; /* re-enable interactivity on individual toasts */
+}
 
 
+/* ---------- Congrats Overlay ---------- */
+.congrats-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
 
+.congrats-box {
+  background: var(--input-bg);
+  color: var(--text-color);
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  position: relative;
+  max-width: 90%;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.congrats-box h2 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.congrats-img {
+  max-width: 250px;
+  height: auto;
+  border-radius: 8px;
+}
+
+.close-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* ---------- Confirm Delete Overlay ---------- */
+.blurred {
+  filter: blur(3px);
+  pointer-events: none;
+  user-select: none;
+}
+
+.confirm-buttons {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.confirm-yes {
+  padding: 0.6rem 1.2rem;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.confirm-no {
+  padding: 0.6rem 1.2rem;
+  background-color: #f44336;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+}

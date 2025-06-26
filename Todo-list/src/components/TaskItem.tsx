@@ -31,19 +31,14 @@ export default function TaskItem({
     setEditing(!editing);
   };
 
-  const handleRemove = () => {
-    setIsAnimatingOut(true);
-    setTimeout(() => onRemove(id), 300);
-  };
-
-  // Animate removal
+  // ✅ Only animate out if parent marks as removing (e.g. completed + delete confirmed)
   useEffect(() => {
     if (isRemoving) {
       setIsAnimatingOut(true);
     }
   }, [isRemoving]);
 
-  // Animate move between lists (just fade out, parent handles re-appearance)
+  // ✅ Animate movement between active ↔ completed (not removal)
   useEffect(() => {
     if (completed !== prevCompleted) {
       setIsAnimatingOut(true);
@@ -89,7 +84,11 @@ export default function TaskItem({
         <button onClick={handleEdit} className="edit" title="Edit">
           ✏️
         </button>
-        <button onClick={handleRemove} className="delete" title="Delete">
+        <button
+          onClick={() => onRemove(id)} // ✅ let parent handle confirm logic
+          className="delete"
+          title="Delete"
+        >
           ❌
         </button>
       </div>
