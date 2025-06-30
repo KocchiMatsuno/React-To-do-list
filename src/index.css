@@ -1,0 +1,392 @@
+/* ---------- Theme Variables (Optional for other use) ---------- */
+body.light {
+  --bg-color: #f4f4f4;
+  --text-color: #111;
+  --input-bg: #ffffff;
+  --input-border: #ccc;
+  --button-bg: #ffffff;
+  --button-text: #000;
+}
+
+body.dark {
+  --bg-color: #111;
+  --text-color: #f4f4f4;
+  --input-bg: #2c2c2c;
+  --input-border: #444;
+  --button-bg: #2c2c2c;
+  --button-text: #fff;
+}
+
+/* ---------- Base Styles ---------- */
+body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.page-wrapper {
+  min-height: 100vh;
+}
+
+/* ---------- Animations ---------- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out forwards;
+}
+
+.fade-out {
+  animation: fadeOut 0.3s ease-in-out forwards;
+}
+
+@keyframes slideFadeOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+}
+
+@keyframes slideFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.slide-fade-out {
+  animation: slideFadeOut 0.3s ease forwards;
+}
+
+.slide-fade-in {
+  animation: slideFadeIn 0.3s ease forwards;
+}
+
+@keyframes slideFadeOutLeft {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+}
+
+@keyframes slideFadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.task-item.fade-out {
+  animation: slideFadeOutLeft 0.3s ease forwards;
+}
+
+.task-item.fade-in {
+  animation: slideFadeInRight 0.3s ease forwards;
+}
+/* ---------- Header ---------- */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background-color: inherit;
+}
+
+.toggle-theme-btn {
+  font-size: 1.5rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.toggle-theme-btn:hover {
+  transform: rotate(20deg);
+}
+
+/* ---------- Main Content ---------- */
+.main-content {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* ---------- Task Input + Add Button + Delete Button ---------- */
+.task-input-wrapper {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.task-input {
+  flex: 1;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid var(--input-border);
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  transition: all 0.3s ease;
+}
+
+
+.add-button,
+.delete-completed-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  line-height: 1;
+  height: 44px; /* force consistent height */
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border: 1px solid var(--input-border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* ---------- Task List ---------- */
+.task-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 1.5rem;
+}
+
+/* Task Item Card (Light & Dark mode handled separately) */
+.task-list li {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Light mode task card */
+body.light .task-list li {
+  background-color: #ffffff;
+  color: #111;
+}
+
+/* Dark mode task card */
+body.dark .task-list li {
+  background-color: #3a3a3a;
+  color: #f4f4f4;
+  box-shadow: 0 4px 8px rgba(255, 255, 255, 0.05);
+}
+
+/* ---------- Task Buttons ---------- */
+.task-list button {
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  transition: color 0.3s ease;
+}
+
+/* You can set transparent icons and customize hover colors if needed */
+.task-list button.edit {
+  color: white;
+}
+
+.task-list button.delete {
+  color: red;
+}
+
+/* ---------- for Delete Completed Button ---------- */
+.delete-completed-button {
+  background-color: #555555; /* dark gray in light mode */
+  color: white;
+}
+
+body.dark .delete-completed-button {
+  background-color: #e0e0e0; /* dirty white in dark mode */
+  color: #111;
+}
+
+/* ---------- Toast Notifications ---------- */
+.toast {
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  animation: fadeInOut 3.5s ease forwards;
+  font-size: 0.95rem;
+  color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  max-width: 320px;
+  word-wrap: break-word;
+}
+
+/* Success = Green (for add or complete) */
+.toast.success {
+  background-color: #4caf50;
+}
+
+/* Error = Red (for delete or duplicate) */
+.toast.error,
+.toast.duplicate {
+  background-color: #f44336;
+}
+
+/* Fade animation for toasts */
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  90% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+/* ---------- Toast Container (Stacked Notifications) ---------- */
+.toast-container {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; /* space between toasts */
+  z-index: 9999;
+}
+
+.toast {
+  pointer-events: auto; /* re-enable interactivity on individual toasts */
+}
+
+
+/* ---------- Congrats Overlay ---------- */
+.congrats-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.congrats-box {
+  background: var(--input-bg);
+  color: var(--text-color);
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  position: relative;
+  max-width: 90%;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.congrats-box h2 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.congrats-img {
+  max-width: 250px;
+  height: auto;
+  border-radius: 8px;
+}
+
+.close-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* ---------- Confirm Delete Overlay ---------- */
+.blurred {
+  filter: blur(3px);
+  pointer-events: none;
+  user-select: none;
+}
+
+.confirm-buttons {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.confirm-yes {
+  padding: 0.6rem 1.2rem;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.confirm-no {
+  padding: 0.6rem 1.2rem;
+  background-color: #f44336;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+}
