@@ -1,21 +1,20 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 export default function TaskInput({
   onAdd,
 }: {
-  onAdd: (title: string) => boolean; // Return success/failure
+  onAdd: (title: string) => Promise<boolean>;
 }) {
   const [title, setTitle] = useState("");
 
-  const handleAdd = () => {
-    if (title.trim()) {
-      const success = onAdd(title.trim());
-      if (success) setTitle("");
+  const handle = async () => {
+    if (!title.trim()) {
+      toast.error("❌ Task title cannot be empty."); // ✅ Toast here
+      return;
     }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") handleAdd();
+    const ok = await onAdd(title.trim());
+    if (ok) setTitle("");
   };
 
   return (
@@ -24,10 +23,10 @@ export default function TaskInput({
         className="task-input"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        onKeyDown={handleKeyDown}
+        onKeyDown={(e) => e.key === "Enter" && handle()}
         placeholder="Enter your task"
       />
-      <button className="add-button" onClick={handleAdd}>
+      <button onClick={handle} className="add-button">
         Add Task
       </button>
     </div>
